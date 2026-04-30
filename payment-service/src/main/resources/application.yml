@@ -1,0 +1,33 @@
+server:
+  port: 9191
+spring:
+  h2:
+    console:
+      enabled: true
+  application:
+    name: PAYMENT_SERVICE
+  datasource:
+    url: jdbc:h2:file:C:/h2data/payment_db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  cloud:
+    loadbalancer:
+      cache:
+        enabled: false
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    instance-id: ${spring.application.name}:${server.port}
+    lease-renewal-interval-in-seconds: 5     # ✅ heartbeat every 5s
+    lease-expiration-duration-in-seconds: 10 # ✅ expire if no heartbeat in 10s
