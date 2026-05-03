@@ -1,0 +1,6 @@
+# This bootstrap will execute before application.yml do # added deps to load bootstrap.yml first
+spring:
+  cloud:
+    config:
+      uri:
+        - http://localhost:9196

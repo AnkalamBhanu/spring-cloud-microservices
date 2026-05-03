@@ -6,14 +6,17 @@ import com.company.common.TransactionResponse;
 import com.company.entity.Order;
 import com.company.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
 @Service
+@RefreshScope
 public class OrderService {
 
     @Autowired
@@ -21,6 +24,15 @@ public class OrderService {
 
     @Autowired
     private DiscoveryClient discoveryClient;
+
+    @Value("${microservice.payment-service.base-url}")
+    private String paymentServiceBaseUrl;
+
+    @Value("${microservice.payment-service.endpoints.do-payment}")
+    private String doPaymentEndpoint;
+
+//    @Value("${microservice.payment-service.endpoints.payment-history}")
+//    private String paymentHistoryEndpoint;
 
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -37,14 +49,14 @@ public class OrderService {
         payment.setAmount(order.getPrice());
 
         // Resolve Payment service URL from Eureka
-        List<ServiceInstance> instances = discoveryClient.getInstances("PAYMENT_SERVICE");
+        List<ServiceInstance> instances = discoveryClient.getInstances(paymentServiceBaseUrl);
         System.out.println("Instances found: " + instances.size());
 
         String baseUrl = instances.get(0).getUri().toString();
         System.out.println("Resolved Payment URL: " + baseUrl);
 
         Payment paymentResponse = restTemplate.postForObject(
-                baseUrl + "/payment/doPayment",
+                baseUrl + doPaymentEndpoint,
                 payment,
                 Payment.class
         );
