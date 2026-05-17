@@ -4,21 +4,60 @@ server:
 spring:
   application:
     name: ORDER-SERVICE
+
   datasource:
     url: jdbc:h2:file:C:/h2data/order_db
     driver-class-name: org.h2.Driver
     username: sa
     password: ""
+
   h2:
     console:
       enabled: true
+
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+
   cloud:
     loadbalancer:
       cache:
-        enabled: false   # ← key fix
+        enabled: false
 
+
+logging:
+  file:
+    name: C:/Users/TIAA User/Desktop/microservice-log.log
+
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+  endpoint:
+    health:
+      show-details: always
+
+
+# Circuit Breaker Configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentService:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED

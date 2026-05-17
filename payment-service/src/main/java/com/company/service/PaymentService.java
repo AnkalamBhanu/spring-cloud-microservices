@@ -2,6 +2,7 @@ package com.company.service;
 
 import com.company.entity.Payment;
 import com.company.repository.PaymentRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,9 @@ public class PaymentService {
     Logger logger= LoggerFactory.getLogger(PaymentService.class);
 
     public Payment doPayment(Payment payment) {
+
+//        logger.info("Payment service request: {}",new ObjectMapper().writeValueAsString(payment));
+
         payment.setPaymentStatus(paymentProcessing());
         payment.setTransactionId(UUID.randomUUID().toString());
         return paymentRepository.save(payment);
@@ -31,7 +35,7 @@ public class PaymentService {
 //        return "success";
     }
 
-    public Payment findPaymentHistoryByOrderId(int orderId){
+    public Payment findPaymentHistoryByOrderId(int orderId) {
         Payment payment = paymentRepository.findByOrderId(orderId);
 //        logger.info("paymentService findPaymentHistoryByOrderId : {}",new ObjectMapper().writeValueAsString(payment));
         return payment ;

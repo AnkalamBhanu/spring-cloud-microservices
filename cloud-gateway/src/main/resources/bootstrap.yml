@@ -4,3 +4,4 @@ spring:
     config:
       uri:
         - http://localhost:9196
+      fail-fast: false           # ← won't crash if config server is down
